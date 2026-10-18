@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>全能办公工具箱 — 图片·PDF·Word·Excel·格式转换 免费在线</title>
+<meta name="description" content="免费在线办公工具箱：图片压缩转换、PDF合并拆分水印、Word转HTML/文本、Excel合并拆分比对、CSV互转。全部浏览器本地处理，文件不上传，手机电脑都能用。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232463c7'/%3E%3Ctext x='32' y='43' font-size='28' text-anchor='middle' fill='white' font-weight='bold'%3E%E5%8A%9E%3C/text%3E%3C/svg%3E">
+<style>
+:root{--b:#2463c7;--b2:#1a4a99;--ink:#1a2233;--ink2:#55617a;--ink3:#8b95a8;--line:#e3e8f0;--bg:#f4f7fc;--card:#fff;--r:14px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei UI",sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.6;padding-bottom:env(safe-area-inset-bottom)}
+.wrap{max-width:900px;margin:0 auto;padding:0 14px}
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.hd{display:flex;align-items:center;gap:10px;height:54px}
+.logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#4a90ff,#1a4a99);
+  display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:800;flex:none}
+.hd b{font-size:16px}
+.hd .tag{font-size:10.5px;color:#fff;background:var(--b);padding:2px 8px;border-radius:999px;font-weight:600}
+.hd .pc{margin-left:auto;font-size:12px;color:var(--ink3)}
+nav{display:flex;gap:7px;padding:12px 0 4px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:none;padding:8px 15px;border-radius:999px;border:1px solid var(--line);background:#fff;
+  font-size:13.5px;font-weight:600;color:var(--ink2);cursor:pointer;white-space:nowrap}
+nav button.on{background:linear-gradient(135deg,#4a90ff,#1a4a99);color:#fff;border-color:transparent;
+  box-shadow:0 4px 14px rgba(36,99,199,.3)}
+section{display:none;padding:10px 0 30px}
+section.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.card h3{font-size:14.5px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.hint{font-size:12.5px;color:var(--ink3);margin-bottom:10px}
+label{font-size:13px;color:var(--ink2)}
+select,input[type=text],input[type=number]{border:1px solid var(--line);border-radius:8px;padding:8px 10px;
+  font-size:14px;background:#fff;color:var(--ink);max-width:100%;font-family:inherit}
+.drop{border:2px dashed #c9d9f0;border-radius:12px;padding:24px 14px;text-align:center;color:var(--ink2);
+  font-size:14px;cursor:pointer;transition:.15s;background:#fafcff}
+.drop:active,.drop.over{border-color:var(--b);background:#eef5ff}
+.drop small{display:block;color:var(--ink3);font-size:12px;margin-top:4px}
+.flist{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.fitem{display:flex;align-items:center;gap:8px;font-size:13px;background:#f2f7ff;border-radius:8px;padding:7px 10px}
+.fitem .ord{width:18px;height:18px;border-radius:50%;background:var(--b);color:#fff;font-size:11px;
+  display:inline-flex;align-items:center;justify-content:center;flex:none}
+.fitem .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fitem .sz{color:var(--ink3);font-size:12px;flex:none}
+.fitem .mv{flex:none;color:var(--ink3);font-size:11px;width:30px;text-align:center;cursor:pointer}
+.fitem button{flex:none;border:none;background:none;color:#c04040;font-size:16px;cursor:pointer;padding:0 4px}
+.opt{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0}
+.go{width:100%;padding:13px;border:none;border-radius:11px;font-size:15.5px;font-weight:700;color:#fff;cursor:pointer;
+  background:linear-gradient(135deg,#4a90ff,#1a4a99);box-shadow:0 6px 18px rgba(36,99,199,.32)}
+.go:disabled{opacity:.45;cursor:default}
+.btn2{padding:9px 16px;border:1px solid var(--line);background:#fff;border-radius:9px;font-size:13.5px;
+  color:var(--ink2);cursor:pointer;font-weight:600}
+.btn2:hover{border-color:var(--b);color:var(--b)}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:none;background:#fff;padding:7px 13px;font-size:13px;color:var(--ink2);cursor:pointer}
+.seg button.on{background:var(--b);color:#fff}
+.prog{height:6px;background:#e6eefb;border-radius:4px;overflow:hidden;margin-top:10px;display:none}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4a90ff,#1a4a99);transition:width .2s}
+.log{font-size:12.5px;color:var(--ink2);margin-top:10px;max-height:140px;overflow-y:auto;font-family:ui-monospace,Consolas,monospace}
+.log div{padding:1px 0}
+.log .err{color:#c04040}
+.log .ok{color:#2fa360}
+.res{margin-top:10px}
+.res .row{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--line);
+  border-radius:9px;margin-bottom:7px;background:#fff;font-size:13px}
+.res .row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.res .row .sz{color:var(--ink3);font-size:12px;flex:none}
+.res .row a{flex:none;text-decoration:none;background:var(--b);color:#fff;font-size:12.5px;
+  padding:5px 13px;border-radius:7px;font-weight:600;cursor:pointer}
+.bigdl{display:block;text-align:center;background:#2fa360;color:#fff;text-decoration:none;
+  padding:12px;border-radius:11px;font-weight:700;font-size:15px;margin-top:10px;cursor:pointer}
+.promo{background:linear-gradient(135deg,#eef5ff,#f4f7fc);border:1px solid #d5e5fb;border-radius:var(--r);
+  padding:13px 16px;margin-bottom:14px;font-size:13px;color:var(--ink2)}
+.promo b{color:var(--ink)}
+.warn{background:#fffaf0;border:1px solid #f5e0b8;border-radius:10px;padding:10px 13px;
+  font-size:12.5px;color:#8a6420;margin-top:10px}
+.pv{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:8px}
+.pv figure{border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff;font-size:11px;text-align:center}
+.pv img{width:100%;height:84px;object-fit:contain;background:#f6f8fc;display:block}
+.pv figcaption{padding:3px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink3)}
+footer{border-top:1px solid var(--line);background:#fff;padding:20px 0 32px;margin-top:10px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--ink3)}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{background:#eaf2ff;color:var(--b2);border-radius:999px;padding:3px 11px;font-size:11.5px;font-weight:600}
+.check{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);cursor:pointer}
+.check input{width:16px;height:16px;accent-color:var(--b)}
+input[type=range]{accent-color:var(--b);width:130px}
+@media(max-width:560px){.hd .pc{display:none}nav button{padding:7px 12px;font-size:13px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hd">
+    <div class="logo">办</div>
+    <b>全能办公工具箱</b>
+    <span class="tag">全免费</span>
+    <span class="pc">本地处理 · 文件不上传</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav>
+    <button class="on" data-t="img">🖼 图片</button>
+    <button data-t="pdf">📕 PDF</button>
+    <button data-t="word">📘 Word</button>
+    <button data-t="xl">📗 Excel</button>
+    <button data-t="conv">🔄 格式转换</button>
+  </nav>
+
+  <div class="promo">🔒 所有处理都在<b>你的浏览器里</b>完成，文件不会上传到任何服务器。断网也能用，不限次数。</div>
+
+  <!-- ==================== 图片 ==================== -->
+  <section id="s-img" class="on">
+    <div class="card">
+      <h3>选择图片</h3>
+      <div class="drop" id="i-drop">点我选择图片（可多选）<small>JPG / PNG / WebP / BMP / GIF</small></div>
+      <input type="file" id="i-files" accept="image/*" multiple hidden>
+      <div class="flist" id="i-list"></div>
+    </div>
+    <div class="card">
+      <h3>处理选项</h3>
+      <div class="opt">
+        <label>尺寸</label>
+        <div class="seg" id="i-mode">
+          <button data-v="none" class="on">不变</button>
+          <button data-v="long">长边</button>
+          <button data-v="fix">固定</button>
+          <button data-v="pct">百分比</button>
+        </div>
+        <span id="i-args"></span>
+      </div>
+      <div class="opt">
+        <label class="check"><input type="checkbox" id="i-sq">补白边成正方形</label>
+        <label class="check"><input type="checkbox" id="i-trim">智能去白边</label>
+        <label class="check"><input type="checkbox" id="i-cut">抠图变透明</label>
+      </div>
+      <div class="opt">
+        <label class="check"><input type="checkbox" id="i-wm">文字水印</label>
+        <input type="text" id="i-wmt" placeholder="水印文字" style="flex:1;min-width:110px">
+        <select id="i-wmp">
+          <option value="se">右下</option><option value="center">居中斜排</option>
+          <option value="sw">左下</option><option value="ne">右上</option><option value="nw">左上</option>
+        </select>
+      </div>
+      <div class="opt">
+        <label class="check"><input type="checkbox" id="i-logo">Logo水印</label>
+        <input type="file" id="i-logofile" accept="image/*" hidden>
+        <button class="btn2" id="i-logobtn" style="padding:6px 12px;font-size:12.5px">选择Logo</button>
+        <span id="i-logolabel" style="font-size:12px;color:var(--ink3)">未选择</span>
+      </div>
+      <div class="opt">
+        <label class="check"><input type="checkbox" id="i-bd">加边框</label>
+        <input type="number" id="i-bdw" value="4" style="width:60px" title="粗细（千分比）">
+        <select id="i-bdc">
+          <option value="#000000">黑</option><option value="#ffffff">白</option>
+          <option value="#444444">深灰</option><option value="#c8c8c8">浅灰</option>
+          <option value="#2463c7">蓝</option>
+        </select>
+      </div>
+      <div class="opt">
+        <label>输出</label>
+        <select id="i-fmt">
+          <option value="keep">保持原格式</option><option value="image/jpeg">JPG</option>
+          <option value="image/png">PNG</option><option value="image/webp">WebP</option>
+        </select>
+        <label>画质 <input type="range" id="i-q" min="30" max="98" value="85"><b id="i-qv" style="font-size:12.5px">85</b></label>
+        <label class="check"><input type="checkbox" id="i-lim">压到不超过</label>
+        <input type="number" id="i-kb" value="200" style="width:64px"><span style="font-size:12.5px;color:var(--ink3)">KB</span>
+      </div>
+    </div>
+    <div class="card">
+      <button class="go" id="i-run">开始处理</button>
+      <div class="prog" id="i-prog"><i></i></div>
+      <div class="log" id="i-log"></div>
+      <div class="pv" id="i-pv"></div>
+      <div class="res" id="i-res"></div>
+    </div>
+  </section>
+
+  <!-- ==================== PDF ==================== -->
+  <section id="s-pdf">
+    <div class="card">
+      <h3>选择 PDF</h3>
+      <div class="drop" id="p-drop">点我选择 PDF（可多选）<small>合并按顺序；拆分/页面操作用第一个</small></div>
+      <input type="file" id="p-files" accept=".pdf,application/pdf" multiple hidden>
+      <div class="flist" id="p-list"></div>
+      <div class="hint" id="p-info"></div>
+    </div>
+    <div class="card">
+      <div class="seg" id="p-mode" style="margin-bottom:10px">
+        <button data-v="merge" class="on">合并</button>
+        <button data-v="each">每页拆</button>
+        <button data-v="chunk">每N页拆</button>
+        <button data-v="range">提取页码</button>
+        <button data-v="pages">页面操作</button>
+        <button data-v="wm">水印</button>
+        <button data-v="size">统一尺寸</button>
+        <button data-v="info">查看信息</button>
+      </div>
+      <div class="opt" id="p-args"></div>
+      <button class="go" id="p-run">开始处理</button>
+      <div class="prog" id="p-prog"><i></i></div>
+      <div class="log" id="p-log"></div>
+      <div class="res" id="p-res"></div>
+    </div>
+  </section>
+
+  <!-- ==================== Word ==================== -->
+  <section id="s-word">
+    <div class="card">
+      <h3>选择 Word 文件</h3>
+      <div class="drop" id="w-drop">点我选择 .docx 文件（可多选）<small>支持 Word 2007+ (.docx)；老格式 .doc 请先另存为 .docx</small></div>
+      <input type="file" id="w-files" accept=".docx" multiple hidden>
+      <div class="flist" id="w-list"></div>
+    </div>
+    <div class="card">
+      <h3>转换方式</h3>
+      <div class="seg" id="w-mode" style="margin-bottom:10px">
+        <button data-v="html" class="on">转 HTML</button>
+        <button data-v="text">转纯文本</button>
+        <button data-v="preview">在线预览</button>
+      </div>
+      <div class="hint" id="w-hint">Word 转 HTML 保留标题、段落、列表、表格、图片，可用于发公众号/网页</div>
+      <button class="go" id="w-run">开始转换</button>
+      <div class="prog" id="w-prog"><i></i></div>
+      <div class="log" id="w-log"></div>
+      <div id="w-preview" style="margin-top:12px;max-height:400px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:14px;background:#fff;display:none"></div>
+      <div class="res" id="w-res"></div>
+    </div>
+  </section>
+
+  <!-- ==================== Excel ==================== -->
+  <section id="s-xl">
+    <div class="card">
+      <h3>选择表格</h3>
+      <div class="drop" id="x-drop">点我选择表格（可多选）<small>.xlsx / .xls / .csv</small></div>
+      <input type="file" id="x-files" accept=".xlsx,.xls,.csv" multiple hidden>
+      <div class="flist" id="x-list"></div>
+      <div class="hint" id="x-info"></div>
+    </div>
+    <div class="card">
+      <div class="seg" id="x-mode" style="margin-bottom:10px">
+        <button data-v="merge" class="on">多表合并</button>
+        <button data-v="split">按列拆分</button>
+        <button data-v="cmp">两表比对</button>
+        <button data-v="csv">转 CSV</button>
+        <button data-v="text">转文本</button>
+        <button data-v="html">转 HTML</button>
+      </div>
+      <div class="opt" id="x-args"></div>
+      <button class="go" id="x-run">开始处理</button>
+      <div class="prog" id="x-prog"><i></i></div>
+      <div class="log" id="x-log"></div>
+      <div class="res" id="x-res"></div>
+    </div>
+  </section>
+
+  <!-- ==================== 格式转换 ==================== -->
+  <section id="s-conv">
+    <div class="card">
+      <h3>通用格式转换</h3>
+      <div class="hint">这里放"跨类型"转换，同类互转请用上面各页</div>
+      <div class="drop" id="c-drop">点我选择文件（可多选）<small>支持 .txt / .md / .html / .csv / .json</small></div>
+      <input type="file" id="c-files" accept=".txt,.md,.html,.htm,.csv,.json" multiple hidden>
+      <div class="flist" id="c-list"></div>
+    </div>
+    <div class="card">
+      <div class="opt">
+        <label>转成</label>
+        <select id="c-target">
+          <option value="docx">Word 文档 (.docx)</option>
+          <option value="html">网页 (.html)</option>
+          <option value="txt">纯文本 (.txt)</option>
+          <option value="csv">表格 (.csv)</option>
+          <option value="json">JSON (.json)</option>
+        </select>
+      </div>
+      <div class="warn">说明：文本类转换是无损的；表格类转换按行/列自动识别；复杂排版（如 Word 里的文本框、艺术字）无法完全保留。</div>
+      <button class="go" id="c-run" style="margin-top:12px">开始转换</button>
+      <div class="prog" id="c-prog"><i></i></div>
+      <div class="log" id="c-log"></div>
+      <div class="res" id="c-res"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="badges">
+      <span class="badge">✓ 全免费</span><span class="badge">✓ 不上传</span>
+      <span class="badge">✓ 不用注册</span><span class="badge">✓ 手机可用</span>
+    </div>
+    <div>图片 · PDF · Word · Excel · 格式转换</div>
+  </div>
+</footer>
+
+<script src="libs/pdf-lib.min.js"></script>
+<script src="libs/xlsx.full.min.js"></script>
+<script src="libs/jszip.min.js"></script>
+<script src="libs/mammoth.min.js"></script>
+<script src="libs/docx.iife.js"></script>
+<script src="office-core.js"></script>
+<script src="office-app.js"></script>
+</body>
+</html>

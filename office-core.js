@@ -207,6 +207,206 @@
     return { total: total, results: results };
   }
 
+  /** PDF 页面 → 图片（用 pdf.js 渲染，浏览器环境） */
+  async function pdfToImages(item, opts, pdfjsLib) {
+    opts = opts || {};
+    var lib = pdfjsLib || (typeof window !== "undefined" ? window.pdfjsLib : null);
+    if (!lib) throw new Error("PDF 渲染库未加载");
+    var doc = await pdfLibLoad(lib, buf(item.data));
+    var total = doc.numPages;
+    var idxs = parseRanges(opts.pages || "", total);
+    var stem = safeName(item.name.replace(/\.[^.]+$/, ""));
+    var fmt = opts.fmt || "png";
+    var scale = Math.max(0.2, Math.min(8, (opts.dpi || 150) / 72));
+    var results = [];
+    for (var k = 0; k < idxs.length; k++) {
+      var i = idxs[k];
+      var page = await doc.getPage(i + 1);
+      var vp = page.getViewport({ scale: scale });
+      var canvas = document.createElement("canvas");
+      canvas.width = Math.round(vp.width);
+      canvas.height = Math.round(vp.height);
+      var ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      await page.render({ canvasContext: ctx, viewport: vp }).promise;
+      var blob = await new Promise(function (res) {
+        canvas.toBlob(res, fmt === "jpg" ? "image/jpeg" : "image/png", 0.92);
+      });
+      results.push({
+        name: stem + "_第" + (i + 1) + "页." + fmt,
+        data: new Uint8Array(await blob.arrayBuffer()),
+        page: i + 1, w: canvas.width, h: canvas.height,
+      });
+    }
+    return { total: total, results: results };
+  }
+
+  async function pdfLibLoad(lib, u8) {
+    // pdf.js 需要独立 ArrayBuffer（worker 会转移所有权）
+    var ab = u8.buffer.slice(u8.byteOffset, u8.byteOffset + u8.byteLength);
+    return lib.getDocument({ data: ab }).promise;
+  }
+
+  /** PDF → 纯文本（用 pdf.js 提取文字层） */
+  async function pdfToText(item, opts, pdfjsLib) {
+    opts = opts || {};
+    var lib = pdfjsLib || (typeof window !== "undefined" ? window.pdfjsLib : null);
+    if (!lib) throw new Error("PDF 渲染库未加载");
+    var doc = await pdfLibLoad(lib, buf(item.data));
+    var total = doc.numPages;
+    var idxs = parseRanges(opts.pages || "", total);
+    var chunks = [];
+    for (var k = 0; k < idxs.length; k++) {
+      var i = idxs[k];
+      var page = await doc.getPage(i + 1);
+      var tc = await page.getTextContent();
+      var line = tc.items.map(function (it) { return it.str; }).join("");
+      chunks.push("===== 第 " + (i + 1) + " 页 =====\n" + line);
+    }
+    var text = chunks.join("\n\n");
+    return {
+      text: text,
+      chars: text.length,
+      pages: idxs.length,
+      name: item.name.replace(/\.[^.]+$/, "") + ".txt",
+    };
+  }
+
+  /** PDF → 单张长图（所有页纵向拼接） */
+  async function pdfToLongImage(item, opts, pdfjsLib) {
+    opts = opts || {};
+    var lib = pdfjsLib || (typeof window !== "undefined" ? window.pdfjsLib : null);
+    if (!lib) throw new Error("PDF 渲染库未加载");
+    var doc = await pdfLibLoad(lib, buf(item.data));
+    var total = doc.numPages;
+    var idxs = parseRanges(opts.pages || "", total);
+    var scale = Math.max(0.2, Math.min(4, (opts.dpi || 120) / 72));
+    var canvases = [];
+    var totalH = 0, maxW = 0;
+    for (var k = 0; k < idxs.length; k++) {
+      var page = await doc.getPage(idxs[k] + 1);
+      var vp = page.getViewport({ scale: scale });
+      var c = document.createElement("canvas");
+      c.width = Math.round(vp.width);
+      c.height = Math.round(vp.height);
+      var ctx = c.getContext("2d");
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, c.width, c.height);
+      await page.render({ canvasContext: ctx, viewport: vp }).promise;
+      canvases.push(c);
+      totalH += c.height;
+      maxW = Math.max(maxW, c.width);
+    }
+    var out = document.createElement("canvas");
+    out.width = maxW;
+    out.height = totalH;
+    var octx = out.getContext("2d");
+    octx.fillStyle = "#fff";
+    octx.fillRect(0, 0, maxW, totalH);
+    var y = 0;
+    canvases.forEach(function (c) {
+      octx.drawImage(c, Math.round((maxW - c.width) / 2), y);
+      y += c.height;
+    });
+    var blob = await new Promise(function (res) { out.toBlob(res, "image/png"); });
+    return {
+      data: new Uint8Array(await blob.arrayBuffer()),
+      name: safeName(item.name.replace(/\.[^.]+$/, "")) + "_长图.png",
+      w: maxW, h: totalH, pages: idxs.length,
+    };
+  }
+
+  /** 图片 → PDF */
+  async function imagesToPdf(items, opts) {
+    opts = opts || {};
+    var doc = await PDFLib.PDFDocument.create();
+    var perFile = [];
+    for (var i = 0; i < items.length; i++) {
+      try {
+        var it = items[i];
+        var u8 = buf(it.data);
+        var type = it.type || "";
+        var img = null;
+        if (/png/i.test(type) || /\.png$/i.test(it.name)) {
+          img = await doc.embedPng(u8);
+        } else if (/jpe?g/i.test(type) || /\.jpe?g$/i.test(it.name)) {
+          img = await doc.embedJpg(u8);
+        } else {
+          // 其它格式（webp/bmp/gif）：先用 canvas 转 PNG
+          var blob = new Blob([u8], { type: type || "image/*" });
+          var bmp = await createImageBitmap(blob).catch(function () { return null; });
+          if (!bmp) throw new Error("不支持的图片格式");
+          var c = document.createElement("canvas");
+          c.width = bmp.width; c.height = bmp.height;
+          c.getContext("2d").drawImage(bmp, 0, 0);
+          var pngBlob = await new Promise(function (res) { c.toBlob(res, "image/png"); });
+          img = await doc.embedPng(new Uint8Array(await pngBlob.arrayBuffer()));
+        }
+        var target = opts.target || "fit";
+        var page;
+        if (target === "fit") {
+          page = doc.addPage([img.width + 24, img.height + 24]);
+          page.drawImage(img, { x: 12, y: 12, width: img.width, height: img.height });
+        } else {
+          var sizes = { a4: [595.28, 841.89], letter: [612, 792], a3: [841.89, 1190.55] };
+          var s = sizes[target] || sizes.a4;
+          page = doc.addPage(s);
+          var sc = Math.min((s[0] - 24) / img.width, (s[1] - 24) / img.height);
+          var w = img.width * sc, h = img.height * sc;
+          page.drawImage(img, { x: (s[0] - w) / 2, y: (s[1] - h) / 2, width: w, height: h });
+        }
+        perFile.push({ name: it.name, ok: true });
+      } catch (e) {
+        perFile.push({ name: items[i].name, ok: false, reason: String(e.message || e) });
+      }
+    }
+    if (!doc.getPageCount()) throw new Error("没有成功插入任何图片");
+    return { data: await doc.save({ useObjectStreams: true }), pages: doc.getPageCount(), perFile: perFile };
+  }
+
+  /** PDF 提取图片（把页面里的内嵌图片抽出来） */
+  async function pdfExtractImages(item, pdfjsLib) {
+    var lib = pdfjsLib || (typeof window !== "undefined" ? window.pdfjsLib : null);
+    if (!lib) throw new Error("PDF 渲染库未加载");
+    var doc = await pdfLibLoad(lib, buf(item.data));
+    var stem = safeName(item.name.replace(/\.[^.]+$/, ""));
+    var results = [];
+    for (var p = 1; p <= doc.numPages; p++) {
+      var page = await doc.getPage(p);
+      var ops = await page.getOperatorList();
+      var imgIndex = 0;
+      for (var i = 0; i < ops.fnArray.length; i++) {
+        var fn = ops.fnArray[i];
+        // OPS.paintImageXObject = 85, paintJpegXObject = 82
+        if (fn === 85 || fn === 82) {
+          var name = ops.argsArray[i][0];
+          try {
+            var imgObj = await new Promise(function (res) {
+              try { page.objs.get(name, res); } catch (e) { res(null); }
+              setTimeout(function () { res(null); }, 800);
+            });
+            if (imgObj && imgObj.data) {
+              var c = document.createElement("canvas");
+              c.width = imgObj.width; c.height = imgObj.height;
+              var ctx = c.getContext("2d");
+              var id = ctx.createImageData(imgObj.width, imgObj.height);
+              id.data.set(imgObj.data);
+              ctx.putImageData(id, 0, 0);
+              var blob = await new Promise(function (res) { c.toBlob(res, "image/png"); });
+              results.push({
+                name: stem + "_p" + p + "_图" + (++imgIndex) + ".png",
+                data: new Uint8Array(await blob.arrayBuffer()),
+                page: p,
+              });
+            }
+          } catch (e) { /* 单张失败跳过 */ }
+        }
+      }
+    }
+    return { pages: doc.numPages, results: results };
+  }
+
   // ==================== Excel ====================
   function readWb(data) { return XLSX.read(buf(data), { type: "array", cellDates: true }); }
   function sheetRows(wb, name) {
@@ -506,7 +706,9 @@
     // PDF
     pdfMerge: pdfMerge, pdfSplit: pdfSplit, pdfPageOps: pdfPageOps,
     pdfWatermark: pdfWatermark, pdfResize: pdfResize, pdfInfo: pdfInfo,
-    pdfToImages: pdfToImages,
+    pdfToImages: pdfToImages, pdfToText: pdfToText, pdfToLongImage: pdfToLongImage,
+    pdfExtractImages: pdfExtractImages,
+    imagesToPdf: imagesToPdf,
     // Excel
     xlMerge: xlMerge, xlSplit: xlSplit, xlCompare: xlCompare, xlHeaders: xlHeaders,
     xlToCsv: xlToCsv, csvToXl: csvToXl, xlToHtml: xlToHtml, xlToText: xlToText,

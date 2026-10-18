@@ -107,6 +107,7 @@ input[type=range]{accent-color:var(--b);width:130px}
     <button data-t="word">📘 Word</button>
     <button data-t="xl">📗 Excel</button>
     <button data-t="conv">🔄 格式转换</button>
+    <button data-t="toimg">🖼→PDF</button>
   </nav>
 
   <div class="promo">🔒 所有处理都在<b>你的浏览器里</b>完成，文件不会上传到任何服务器。断网也能用，不限次数。</div>
@@ -197,6 +198,9 @@ input[type=range]{accent-color:var(--b);width:130px}
         <button data-v="pages">页面操作</button>
         <button data-v="wm">水印</button>
         <button data-v="size">统一尺寸</button>
+        <button data-v="2img">转图片</button>
+        <button data-v="2txt">提取文字</button>
+        <button data-v="longimg">转长图</button>
         <button data-v="info">查看信息</button>
       </div>
       <div class="opt" id="p-args"></div>
@@ -257,6 +261,32 @@ input[type=range]{accent-color:var(--b);width:130px}
     </div>
   </section>
 
+  <!-- ==================== 图片转 PDF ==================== -->
+  <section id="s-toimg">
+    <div class="card">
+      <h3>选择图片</h3>
+      <div class="drop" id="ti-drop">点我选择图片（可多选，按顺序合成 PDF）<small>JPG / PNG / WebP / BMP / GIF</small></div>
+      <input type="file" id="ti-files" accept="image/*" multiple hidden>
+      <div class="flist" id="ti-list"></div>
+    </div>
+    <div class="card">
+      <div class="opt">
+        <label>页面尺寸</label>
+        <select id="ti-target">
+          <option value="fit">跟随图片（无白边）</option>
+          <option value="a4">A4</option>
+          <option value="letter">Letter</option>
+          <option value="a3">A3</option>
+        </select>
+      </div>
+      <div class="hint">「跟随图片」按图片原始尺寸建页，适合做照片集；A4 等会自动缩放居中</div>
+      <button class="go" id="ti-run">合成 PDF</button>
+      <div class="prog" id="ti-prog"><i></i></div>
+      <div class="log" id="ti-log"></div>
+      <div class="res" id="ti-res"></div>
+    </div>
+  </section>
+
   <!-- ==================== 格式转换 ==================== -->
   <section id="s-conv">
     <div class="card">
@@ -297,11 +327,18 @@ input[type=range]{accent-color:var(--b);width:130px}
 </footer>
 
 <script src="libs/pdf-lib.min.js"></script>
+<script src="libs/pdfjs.min.js"></script>
 <script src="libs/xlsx.full.min.js"></script>
 <script src="libs/jszip.min.js"></script>
 <script src="libs/mammoth.min.js"></script>
 <script src="libs/docx.iife.js"></script>
 <script src="office-core.js"></script>
 <script src="office-app.js"></script>
+<script>
+// pdf.js worker 配置（必须在使用前设置）
+if (window.pdfjsLib) {
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = "libs/pdf.worker.min.js";
+}
+</script>
 </body>
 </html>

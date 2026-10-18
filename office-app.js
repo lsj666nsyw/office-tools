@@ -465,6 +465,41 @@
         var op = document.createElement("option"); op.value = o[0]; op.textContent = o[1]; sel2.appendChild(op);
       });
       box.appendChild(sel2);
+    } else if (v === "2img") {
+      box.appendChild(lab("清晰度"));
+      var dpiSel = document.createElement("select"); dpiSel.id = "p-dpi";
+      [["72", "72 屏幕"], ["150", "150 普通打印"], ["300", "300 高清"]].forEach(function (o) {
+        var op = document.createElement("option"); op.value = o[0]; op.textContent = o[1];
+        if (o[0] === "150") op.selected = true;
+        dpiSel.appendChild(op);
+      });
+      box.appendChild(dpiSel);
+      box.appendChild(lab("格式"));
+      var fmtSel = document.createElement("select"); fmtSel.id = "p-imgfmt";
+      [["png", "PNG"], ["jpg", "JPG"]].forEach(function (o) {
+        var op = document.createElement("option"); op.value = o[0]; op.textContent = o[1]; fmtSel.appendChild(op);
+      });
+      box.appendChild(fmtSel);
+      box.appendChild(lab("页码"));
+      box.appendChild(inp("p-imgpages", "text", "", "140px", "留空=全部"));
+    } else if (v === "2txt") {
+      box.appendChild(lab("页码"));
+      box.appendChild(inp("p-txtpages", "text", "", "160px", "留空=全部"));
+      var tip2 = document.createElement("span");
+      tip2.style.cssText = "font-size:12px;color:var(--ink3)";
+      tip2.textContent = "（扫描件没有文字层，提取会为空）";
+      box.appendChild(tip2);
+    } else if (v === "longimg") {
+      box.appendChild(lab("清晰度"));
+      var dpi2 = document.createElement("select"); dpi2.id = "p-longdpi";
+      [["80", "80 省流量"], ["120", "120 标准"], ["200", "200 高清"]].forEach(function (o) {
+        var op = document.createElement("option"); op.value = o[0]; op.textContent = o[1];
+        if (o[0] === "120") op.selected = true;
+        dpi2.appendChild(op);
+      });
+      box.appendChild(dpi2);
+      box.appendChild(lab("页码"));
+      box.appendChild(inp("p-longpages", "text", "", "140px", "留空=全部"));
     } else if (v === "merge") {
       var s = document.createElement("span");
       s.style.cssText = "font-size:12.5px;color:var(--ink3)";
@@ -548,6 +583,45 @@
         }
         if (outs2.length === 1) resultRow(res, outs2[0].name, outs2[0].data.byteLength, outs2[0].data, "application/pdf");
         else await bigZip(res, outs2, "PDF尺寸统一.zip");
+      } else if (v === "2img") {
+        var outs3 = [];
+        for (var q = 0; q < pPick.files.length; q++) {
+          var fq = pPick.files[q];
+          var rq = await TB.pdfToImages({ name: fq.name, data: await readBuf(fq) }, {
+            dpi: +(($("p-dpi") || {}).value || 150),
+            fmt: ($("p-imgfmt") || {}).value || "png",
+            pages: ($("p-imgpages") || {}).value || "",
+          }, window.pdfjsLib);
+          rq.results.forEach(function (x) {
+            outs3.push({ name: x.name, data: x.data });
+          });
+          log(box, "✓ " + fq.name + " → " + rq.results.length + " 张图", "ok");
+          prog($("p-prog"), (q + 1) / pPick.files.length);
+        }
+        if (outs3.length === 1) resultRow(res, outs3[0].name, outs3[0].data.byteLength, outs3[0].data, "image/png");
+        else if (outs3.length > 1) await bigZip(res, outs3, "PDF转图片.zip");
+      } else if (v === "2txt") {
+        var outsT = [];
+        for (var t = 0; t < pPick.files.length; t++) {
+          var ft = pPick.files[t];
+          var rt2 = await TB.pdfToText({ name: ft.name, data: await readBuf(ft) }, {
+            pages: ($("p-txtpages") || {}).value || "",
+          }, window.pdfjsLib);
+          outsT.push({ name: rt2.name, data: new TextEncoder().encode(rt2.text) });
+          log(box, "✓ " + ft.name + "  " + rt2.pages + " 页，" + rt2.chars + " 字符", "ok");
+          if (rt2.chars < 10) log(box, "  ⚠ 文字很少，可能是扫描件（没有文字层）", null);
+          prog($("p-prog"), (t + 1) / pPick.files.length);
+        }
+        if (outsT.length === 1) resultRow(res, outsT[0].name, outsT[0].data.byteLength, outsT[0].data, "text/plain");
+        else if (outsT.length > 1) await bigZip(res, outsT, "PDF文字.zip");
+      } else if (v === "longimg") {
+        var fL = pPick.first;
+        var rL = await TB.pdfToLongImage({ name: fL.name, data: await readBuf(fL) }, {
+          dpi: +(($("p-longdpi") || {}).value || 120),
+          pages: ($("p-longpages") || {}).value || "",
+        }, window.pdfjsLib);
+        log(box, "✓ " + rL.pages + " 页拼成 " + rL.w + "×" + rL.h + " 长图", "ok");
+        resultRow(res, rL.name, rL.data.byteLength, rL.data, "image/png");
       } else if (v === "info") {
         var fi = pPick.first;
         var txt = await TB.pdfInfo({ name: fi.name, data: await readBuf(fi) });
@@ -713,6 +787,34 @@
       }
     } catch (e) { log(box, "✗ " + (e.message || e), "err"); }
     this.disabled = false; prog($("x-prog"), null);
+  };
+
+  // ==================================================================
+  // 图片 → PDF
+  // ==================================================================
+  var tiPick = picker("ti-drop", "ti-files", "ti-list", /^image\//, true);
+  $("ti-run").onclick = async function () {
+    var box = $("ti-log"), res = $("ti-res");
+    clear(box); clear(res);
+    if (!tiPick.files.length) { log(box, "请先选择图片", "err"); return; }
+    this.disabled = true; prog($("ti-prog"), 0);
+    try {
+      var items = [];
+      for (var i = 0; i < tiPick.files.length; i++) {
+        var f = tiPick.files[i];
+        items.push({ name: f.name, data: await readBuf(f), type: f.type });
+        prog($("ti-prog"), (i + 1) / (tiPick.files.length + 1));
+      }
+      var r = await TB.imagesToPdf(items, { target: $("ti-target").value });
+      r.perFile.forEach(function (p) {
+        if (p.ok) log(box, "  ✓ " + p.name);
+        else log(box, "  ✗ " + p.name + "：" + p.reason, "err");
+      });
+      log(box, "", null);
+      log(box, "合成完成：共 " + r.pages + " 页", "ok");
+      resultRow(res, "图片合集.pdf", r.data.byteLength, r.data, "application/pdf");
+    } catch (e) { log(box, "✗ " + (e.message || e), "err"); }
+    this.disabled = false; prog($("ti-prog"), null);
   };
 
   // ==================================================================

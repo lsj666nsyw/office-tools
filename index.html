@@ -86,7 +86,28 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-con
 .check{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);cursor:pointer}
 .check input{width:16px;height:16px;accent-color:var(--b)}
 input[type=range]{accent-color:var(--b);width:130px}
-@media(max-width:560px){.hd .pc{display:none}nav button{padding:7px 12px;font-size:13px}}
+/* 跨站导流 */
+.crossnav{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+  background:#fff;border:1px solid var(--line);border-radius:var(--r);
+  padding:11px 14px;margin-bottom:14px;
+}
+.cn-lab{font-size:12px;color:var(--ink3);font-weight:600;flex:none}
+.cn-item{
+  display:inline-flex;align-items:center;gap:5px;text-decoration:none;
+  font-size:12.5px;color:var(--ink2);background:#f4f7fc;border:1px solid #e3e8f0;
+  border-radius:999px;padding:5px 12px;font-weight:600;transition:.15s;
+}
+.cn-item:hover{border-color:var(--b);color:var(--b2);background:#eef5ff}
+.cn-item b{font-weight:700}
+.cn-home{background:#eef5ff;border-color:#d5e5fd}
+.cn-home:hover{border-color:var(--b);color:var(--b2);background:#e4efff}
+@media(max-width:560px){
+  .hd .pc{display:none}
+  nav button{padding:7px 12px;font-size:13px}
+  .crossnav{gap:6px;padding:10px 12px}
+  .cn-lab{width:100%}
+}
 </style>
 </head>
 <body>
@@ -113,6 +134,13 @@ input[type=range]{accent-color:var(--b);width:130px}
   </nav>
 
   <div class="promo">🔒 所有处理都在<b>你的浏览器里</b>完成，文件不会上传到任何服务器。断网也能用，不限次数。</div>
+
+  <div class="crossnav">
+    <span class="cn-lab">需要别的？</span>
+    <a class="cn-item" href="https://lsj666nsyw.github.io/whale-tools/">🧰 24 个<b>实用小工具</b></a>
+    <a class="cn-item" href="https://lsj666nsyw.github.io/whale-batch/">📦 图片/PDF/表格<b>批量处理</b></a>
+    <a class="cn-item cn-home" href="https://lsj666nsyw.github.io/whale-home/">🐋 全部工具<b>总入口</b></a>
+  </div>
 
   <!-- ==================== 图片 ==================== -->
   <section id="s-img" class="on">

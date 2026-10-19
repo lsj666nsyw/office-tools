@@ -1,0 +1,18 @@
+{
+  "name": "office-toolbox",
+  "version": "1.0.0",
+  "private": true,
+  "description": "全能办公工具箱（纯前端，浏览器本地处理）",
+  "scripts": {
+    "test": "node _calib.js && node test_xp.js && node test_br2.js && node test_all.js",
+    "test:env": "node test_env_limits.js",
+    "serve": "python -m http.server 8099 --bind 127.0.0.1"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.3",
+    "jszip": "^3.10.2",
+    "mammoth": "^1.13.0",
+    "pdf-lib": "^1.17.1",
+    "xlsx": "^0.18.5"
+  }
+}

@@ -108,6 +108,8 @@ input[type=range]{accent-color:var(--b);width:130px}
     <button data-t="xl">📗 Excel</button>
     <button data-t="conv">🔄 格式转换</button>
     <button data-t="toimg">🖼→PDF</button>
+    <button data-t="ib">✨ 图片批处理+</button>
+    <button data-t="xp">🔧 数据处理</button>
   </nav>
 
   <div class="promo">🔒 所有处理都在<b>你的浏览器里</b>完成，文件不会上传到任何服务器。断网也能用，不限次数。</div>
@@ -314,6 +316,63 @@ input[type=range]{accent-color:var(--b);width:130px}
       <div class="res" id="c-res"></div>
     </div>
   </section>
+<!-- ==================== 图片批处理+ ==================== -->
+<section id="s-ib">
+  <div class="card">
+    <h3>选择图片</h3>
+    <div class="drop" id="b-drop">点我选择图片（可多选）<small>支持 JPG / PNG / WebP / BMP / GIF</small></div>
+    <input type="file" id="b-files" accept="image/*" multiple hidden>
+    <div class="flist" id="b-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="seg" id="b-mode" style="margin-bottom:10px">
+      <button data-v="qr" class="on">📷 识别二维码</button>
+      <button data-v="wm2">💧 批量加水印</button>
+      <button data-v="stitch">🧩 图片拼接</button>
+      <button data-v="gif">🎞 GIF 拆帧</button>
+    </div>
+
+    <div class="opt" id="b-args">
+      <span style="font-size:12.5px;color:var(--ink3)">从每张图里识别二维码，输出识别到的网址/文字</span>
+    </div>
+
+    <div class="hint" id="b-hint"></div>
+    <button class="go" id="b-run">开始处理</button>
+    <div class="prog" id="b-prog"><i></i></div>
+    <div class="log" id="b-log"></div>
+    <div class="res" id="b-res"></div>
+  </div>
+</section>
+
+<!-- ==================== Excel 数据处理 ==================== -->
+<section id="s-xp">
+  <div class="card">
+    <h3>选择表格</h3>
+    <div class="drop" id="xp-drop">点我选择表格<small>.xlsx / .csv；数据处理只处理第一个文件</small></div>
+    <input type="file" id="xp-files" accept=".xlsx,.xls,.csv" hidden>
+    <div class="flist" id="xp-list"></div>
+    <div class="hint" id="xp-info"></div>
+  </div>
+  <div class="card">
+    <h3>数据处理</h3>
+    <div class="seg" id="xp-mode" style="margin-bottom:10px">
+      <button data-v="clean" class="on">🧹 清理数据</button>
+      <button data-v="sort">⬆️ 排序</button>
+      <button data-v="filter">🔍 筛选</button>
+      <button data-v="stats">📊 统计汇总</button>
+      <button data-v="splitcol">✂️ 拆分列</button>
+      <button data-v="mergecol">🔗 合并列</button>
+    </div>
+    <div class="opt" id="xp-args"></div>
+    <div class="hint" id="xp-hint"></div>
+    <button class="go" id="xp-run">处理</button>
+    <div class="prog" id="xp-prog"><i></i></div>
+    <div class="log" id="xp-log"></div>
+    <div class="res" id="xp-res"></div>
+  </div>
+</section>
+
 </main>
 
 <footer>
@@ -328,6 +387,8 @@ input[type=range]{accent-color:var(--b);width:130px}
 
 <script src="libs/pdf-lib.min.js"></script>
 <script src="libs/pdfjs.min.js"></script>
+<script src="libs/jsQR.js"></script>
+<script src="libs/bic.js"></script>
 <script src="libs/xlsx.full.min.js"></script>
 <script src="libs/jszip.min.js"></script>
 <script src="libs/mammoth.min.js"></script>

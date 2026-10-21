@@ -7,114 +7,106 @@
 <meta name="description" content="免费在线办公工具箱：图片压缩转换、PDF合并拆分水印、Word转HTML/文本、Excel合并拆分比对、CSV互转。全部浏览器本地处理，文件不上传，手机电脑都能用。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232463c7'/%3E%3Ctext x='32' y='43' font-size='28' text-anchor='middle' fill='white' font-weight='bold'%3E%E5%8A%9E%3C/text%3E%3C/svg%3E">
 <style>
-:root{--b:#2463c7;--b2:#1a4a99;--ink:#1a2233;--ink2:#55617a;--ink3:#8b95a8;--line:#e3e8f0;--bg:#f4f7fc;--card:#fff;--r:14px}
+/* 设计原则：单色系、无渐变、无装饰图形、排版建立层级。 */
+:root{
+  --ink:#1a1a1a;--ink2:#555;--ink3:#999;--line:#e8e8e8;--bg:#fafafa;--card:#fff;
+  --accent:#2b5cff;--accent-dim:#f0f4ff;--radius:4px;
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei UI",sans-serif;
-  background:var(--bg);color:var(--ink);line-height:1.6;padding-bottom:env(safe-area-inset-bottom)}
-.wrap{max-width:900px;margin:0 auto;padding:0 14px}
-header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.hd{display:flex;align-items:center;gap:10px;height:54px}
-.logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#4a90ff,#1a4a99);
-  display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:800;flex:none}
-.hd b{font-size:16px}
-.hd .tag{font-size:10.5px;color:#fff;background:var(--b);padding:2px 8px;border-radius:999px;font-weight:600}
+  background:var(--bg);color:var(--ink);line-height:1.7;font-size:15px;padding-bottom:env(safe-area-inset-bottom)}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hd{display:flex;align-items:center;gap:10px;height:56px}
+.logo{width:28px;height:28px;flex:none;display:flex;align-items:center;justify-content:center}
+.logo svg{width:100%;height:100%}
+.hd b{font-size:15px;font-weight:600}
+.hd .tag{display:none}
 .hd .pc{margin-left:auto;font-size:12px;color:var(--ink3)}
-nav{display:flex;gap:7px;padding:12px 0 4px;overflow-x:auto;scrollbar-width:none}
+nav{display:flex;gap:0;padding:8px 0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line)}
 nav::-webkit-scrollbar{display:none}
-nav button{flex:none;padding:8px 15px;border-radius:999px;border:1px solid var(--line);background:#fff;
-  font-size:13.5px;font-weight:600;color:var(--ink2);cursor:pointer;white-space:nowrap}
-nav button.on{background:linear-gradient(135deg,#4a90ff,#1a4a99);color:#fff;border-color:transparent;
-  box-shadow:0 4px 14px rgba(36,99,199,.3)}
-section{display:none;padding:10px 0 30px}
+nav button{flex:none;padding:8px 12px;font-size:13px;color:var(--ink2);cursor:pointer;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:.12s;background:none;border-top:none;border-left:none;border-right:none}
+nav button:hover{color:var(--ink)}
+nav button.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;box-shadow:none;background:none}
+section{display:none;padding:16px 0 30px}
 section.on{display:block}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
-.card h3{font-size:14.5px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
-.hint{font-size:12.5px;color:var(--ink3);margin-bottom:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px}
+.card h3{font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.hint{font-size:13px;color:var(--ink2);margin-bottom:10px}
 label{font-size:13px;color:var(--ink2)}
-select,input[type=text],input[type=number]{border:1px solid var(--line);border-radius:8px;padding:8px 10px;
+select,input[type=text],input[type=number]{border:1px solid var(--line);border-radius:var(--radius);padding:8px 12px;
   font-size:14px;background:#fff;color:var(--ink);max-width:100%;font-family:inherit}
-.drop{border:2px dashed #c9d9f0;border-radius:12px;padding:24px 14px;text-align:center;color:var(--ink2);
-  font-size:14px;cursor:pointer;transition:.15s;background:#fafcff}
-.drop:active,.drop.over{border-color:var(--b);background:#eef5ff}
+.drop{border:1px dashed var(--line);border-radius:var(--radius);padding:24px 14px;text-align:center;color:var(--ink2);
+  font-size:14px;cursor:pointer;transition:.15s;background:#fff}
+.drop:active,.drop.over{border-color:var(--accent);background:var(--accent-dim)}
 .drop small{display:block;color:var(--ink3);font-size:12px;margin-top:4px}
 .flist{margin-top:10px;display:flex;flex-direction:column;gap:6px}
-.fitem{display:flex;align-items:center;gap:8px;font-size:13px;background:#f2f7ff;border-radius:8px;padding:7px 10px}
-.fitem .ord{width:18px;height:18px;border-radius:50%;background:var(--b);color:#fff;font-size:11px;
+.fitem{display:flex;align-items:center;gap:8px;font-size:13px;background:#f7f7f7;border-radius:var(--radius);padding:7px 10px}
+.fitem .ord{width:18px;height:18px;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;
   display:inline-flex;align-items:center;justify-content:center;flex:none}
 .fitem .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fitem .sz{color:var(--ink3);font-size:12px;flex:none}
 .fitem .mv{flex:none;color:var(--ink3);font-size:11px;width:30px;text-align:center;cursor:pointer}
 .fitem button{flex:none;border:none;background:none;color:#c04040;font-size:16px;cursor:pointer;padding:0 4px}
 .opt{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0}
-.go{width:100%;padding:13px;border:none;border-radius:11px;font-size:15.5px;font-weight:700;color:#fff;cursor:pointer;
-  background:linear-gradient(135deg,#4a90ff,#1a4a99);box-shadow:0 6px 18px rgba(36,99,199,.32)}
-.go:disabled{opacity:.45;cursor:default}
-.btn2{padding:9px 16px;border:1px solid var(--line);background:#fff;border-radius:9px;font-size:13.5px;
-  color:var(--ink2);cursor:pointer;font-weight:600}
-.btn2:hover{border-color:var(--b);color:var(--b)}
-.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;flex-wrap:wrap}
+.go{width:100%;padding:12px;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;color:#fff;cursor:pointer;
+  background:var(--accent);box-shadow:none}
+.go:hover{opacity:.88}
+.go:disabled{opacity:.4;cursor:default}
+.btn2{padding:8px 14px;border:1px solid var(--line);background:#fff;border-radius:var(--radius);font-size:13px;
+  color:var(--ink2);cursor:pointer;font-weight:500}
+.btn2:hover{border-color:var(--accent);color:var(--accent)}
+.seg{display:flex;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;flex-wrap:wrap}
 .seg button{border:none;background:#fff;padding:7px 13px;font-size:13px;color:var(--ink2);cursor:pointer}
-.seg button.on{background:var(--b);color:#fff}
-.prog{height:6px;background:#e6eefb;border-radius:4px;overflow:hidden;margin-top:10px;display:none}
-.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4a90ff,#1a4a99);transition:width .2s}
+.seg button.on{background:var(--accent);color:#fff}
+.prog{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:10px;display:none}
+.prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
 .log{font-size:12.5px;color:var(--ink2);margin-top:10px;max-height:140px;overflow-y:auto;font-family:ui-monospace,Consolas,monospace}
 .log div{padding:1px 0}
 .log .err{color:#c04040}
 .log .ok{color:#2fa360}
 .res{margin-top:10px}
 .res .row{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--line);
-  border-radius:9px;margin-bottom:7px;background:#fff;font-size:13px}
+  border-radius:var(--radius);margin-bottom:7px;background:#fff;font-size:13px}
 .res .row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .res .row .sz{color:var(--ink3);font-size:12px;flex:none}
-.res .row a{flex:none;text-decoration:none;background:var(--b);color:#fff;font-size:12.5px;
-  padding:5px 13px;border-radius:7px;font-weight:600;cursor:pointer}
-.bigdl{display:block;text-align:center;background:#2fa360;color:#fff;text-decoration:none;
-  padding:12px;border-radius:11px;font-weight:700;font-size:15px;margin-top:10px;cursor:pointer}
-.promo{background:linear-gradient(135deg,#eef5ff,#f4f7fc);border:1px solid #d5e5fb;border-radius:var(--r);
+.res .row a{flex:none;text-decoration:none;background:var(--accent);color:#fff;font-size:12.5px;
+  padding:5px 13px;border-radius:var(--radius);font-weight:600;cursor:pointer}
+.bigdl{display:block;text-align:center;background:var(--ink);color:#fff;text-decoration:none;
+  padding:12px;border-radius:var(--radius);font-weight:600;font-size:14px;margin-top:10px;cursor:pointer}
+.promo{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
   padding:13px 16px;margin-bottom:14px;font-size:13px;color:var(--ink2)}
 .promo b{color:var(--ink)}
-.warn{background:#fffaf0;border:1px solid #f5e0b8;border-radius:10px;padding:10px 13px;
-  font-size:12.5px;color:#8a6420;margin-top:10px}
+.warn{background:#fff;border:1px solid var(--line);border-left:3px solid var(--ink3);border-radius:var(--radius);padding:10px 13px;
+  font-size:12.5px;color:var(--ink2);margin-top:10px}
 .pv{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:8px}
-.pv figure{border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff;font-size:11px;text-align:center}
-.pv img{width:100%;height:84px;object-fit:contain;background:#f6f8fc;display:block}
+.pv figure{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff;font-size:11px;text-align:center}
+.pv img{width:100%;height:84px;object-fit:contain;background:#f7f7f7;display:block}
 .pv figcaption{padding:3px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink3)}
-footer{border-top:1px solid var(--line);background:#fff;padding:20px 0 32px;margin-top:10px}
-footer .wrap{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--ink3)}
-.badges{display:flex;gap:8px;flex-wrap:wrap}
-.badge{background:#eaf2ff;color:var(--b2);border-radius:999px;padding:3px 11px;font-size:11.5px;font-weight:600}
+footer{border-top:1px solid var(--line);background:#fff;padding:24px 0 32px;margin-top:48px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--ink3)}
+.badges{display:flex;gap:12px;flex-wrap:wrap}
+.badge{background:none;color:var(--ink2);border-radius:0;padding:0;font-size:12px;font-weight:500}
 .check{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);cursor:pointer}
-.check input{width:16px;height:16px;accent-color:var(--b)}
-input[type=range]{accent-color:var(--b);width:130px}
-/* 跨站导流 */
-.crossnav{
-  display:flex;flex-wrap:wrap;align-items:center;gap:8px;
-  background:#fff;border:1px solid var(--line);border-radius:var(--r);
-  padding:11px 14px;margin-bottom:14px;
-}
-.cn-lab{font-size:12px;color:var(--ink3);font-weight:600;flex:none}
-.cn-item{
-  display:inline-flex;align-items:center;gap:5px;text-decoration:none;
-  font-size:12.5px;color:var(--ink2);background:#f4f7fc;border:1px solid #e3e8f0;
-  border-radius:999px;padding:5px 12px;font-weight:600;transition:.15s;
-}
-.cn-item:hover{border-color:var(--b);color:var(--b2);background:#eef5ff}
-.cn-item b{font-weight:700}
-.cn-home{background:#eef5ff;border-color:#d5e5fd}
-.cn-home:hover{border-color:var(--b);color:var(--b2);background:#e4efff}
-@media(max-width:560px){
-  .hd .pc{display:none}
-  nav button{padding:7px 12px;font-size:13px}
-  .crossnav{gap:6px;padding:10px 12px}
-  .cn-lab{width:100%}
-}
+.check input{width:16px;height:16px;accent-color:var(--accent)}
+input[type=range]{accent-color:var(--accent);width:130px}
+.crossnav{display:flex;flex-wrap:wrap;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);
+  border-radius:var(--radius);padding:12px 16px;margin-bottom:14px;font-size:13px}
+.cn-lab{font-size:12px;color:var(--ink3);font-weight:500}
+.cn-item{color:var(--ink2);text-decoration:none;font-weight:500;background:none;border:none;padding:0}
+.cn-item:hover{color:var(--accent)}
+.cn-item b{font-weight:500}
+.cn-home{background:none}
+@media(max-width:560px){.hd .pc{display:none}nav button{padding:7px 10px;font-size:12.5px}
+  .crossnav{gap:10px}.cn-lab{width:100%}}
 </style>
 </head>
 <body>
 
 <header>
   <div class="wrap hd">
-    <div class="logo">办</div>
+    <div class="logo"><svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#1a1a1a"/><path d="M6 16c0-4.4 4-8 10-8s10 3.6 10 8-4 8-10 8-10-3.6-10-8z" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="13" r="1" fill="#fff"/></svg></div>
     <b>全能办公工具箱</b>
     <span class="tag">全免费</span>
     <span class="pc">本地处理 · 文件不上传</span>
@@ -123,17 +115,17 @@ input[type=range]{accent-color:var(--b);width:130px}
 
 <main class="wrap">
   <nav>
-    <button class="on" data-t="img">🖼 图片</button>
-    <button data-t="pdf">📕 PDF</button>
-    <button data-t="word">📘 Word</button>
-    <button data-t="xl">📗 Excel</button>
-    <button data-t="conv">🔄 格式转换</button>
-    <button data-t="toimg">🖼→PDF</button>
-    <button data-t="ib">✨ 图片批处理+</button>
-    <button data-t="xp">🔧 数据处理</button>
+    <button class="on" data-t="img">图片</button>
+    <button data-t="pdf">PDF</button>
+    <button data-t="word">Word</button>
+    <button data-t="xl">Excel</button>
+    <button data-t="conv">格式转换</button>
+    <button data-t="toimg">→PDF</button>
+    <button data-t="ib">图片批处理+</button>
+    <button data-t="xp">数据处理</button>
   </nav>
 
-  <div class="promo">🔒 所有处理都在<b>你的浏览器里</b>完成，文件不会上传到任何服务器。断网也能用，不限次数。</div>
+  <div class="promo">所有处理都在<b>你的浏览器里</b>完成，文件不会上传到任何服务器。断网也能用，不限次数。</div>
 
   <div class="crossnav">
     <span class="cn-lab">需要别的？</span>
@@ -355,10 +347,10 @@ input[type=range]{accent-color:var(--b);width:130px}
 
   <div class="card">
     <div class="seg" id="b-mode" style="margin-bottom:10px">
-      <button data-v="qr" class="on">📷 识别二维码</button>
-      <button data-v="wm2">💧 批量加水印</button>
-      <button data-v="stitch">🧩 图片拼接</button>
-      <button data-v="gif">🎞 GIF 拆帧</button>
+      <button data-v="qr" class="on">识别二维码</button>
+      <button data-v="wm2">批量加水印</button>
+      <button data-v="stitch">图片拼接</button>
+      <button data-v="gif">GIF 拆帧</button>
     </div>
 
     <div class="opt" id="b-args">
@@ -385,12 +377,12 @@ input[type=range]{accent-color:var(--b);width:130px}
   <div class="card">
     <h3>数据处理</h3>
     <div class="seg" id="xp-mode" style="margin-bottom:10px">
-      <button data-v="clean" class="on">🧹 清理数据</button>
-      <button data-v="sort">⬆️ 排序</button>
-      <button data-v="filter">🔍 筛选</button>
-      <button data-v="stats">📊 统计汇总</button>
-      <button data-v="splitcol">✂️ 拆分列</button>
-      <button data-v="mergecol">🔗 合并列</button>
+      <button data-v="clean" class="on">清理数据</button>
+      <button data-v="sort">排序</button>
+      <button data-v="filter">筛选</button>
+      <button data-v="stats">统计汇总</button>
+      <button data-v="splitcol">拆分列</button>
+      <button data-v="mergecol">合并列</button>
     </div>
     <div class="opt" id="xp-args"></div>
     <div class="hint" id="xp-hint"></div>
